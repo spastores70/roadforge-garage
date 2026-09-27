@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 const affiliateBase =
   "https://www.kqzyfj.com/click-101807185-17318871";
@@ -14,13 +14,21 @@ const makes: Record<string, string[]> = {
   GMC: ["Sierra 1500", "Sierra 2500 HD", "Canyon"],
 };
 
+const heroSlides = [
+  { src: "/images/hero-dusk.webp", label: "Desert trail at dusk" },
+  { src: "/images/hero-forest.webp", label: "Misty forest crossing" },
+  { src: "/images/hero-worksite.webp", label: "Industrial worksite at blue hour" },
+  { src: "/images/hero-snow.webp", label: "Snowy mountain pass" },
+  { src: "/images/hero-coast.webp", label: "Coastal highway at golden hour" },
+];
+
 const categories = [
-  { icon: "▰", name: "Tonneau Covers", copy: "Secure, weather-ready bed protection.", tag: "BED PROTECTION" },
-  { icon: "↗", name: "Running Boards", copy: "A stronger step with trail-ready stance.", tag: "STEP BARS" },
-  { icon: "▦", name: "Floor Liners", copy: "Precision-fit defense against mud and spills.", tag: "INTERIOR ARMOR" },
-  { icon: "▱", name: "Truck Bumpers", copy: "Heavy-duty protection with an aggressive profile.", tag: "FRONT & REAR" },
-  { icon: "◉", name: "Lighting", copy: "See farther with durable LED upgrades.", tag: "VISIBILITY" },
-  { icon: "⌁", name: "Storage", copy: "Organize tools and cargo without wasted space.", tag: "TRUCK STORAGE" },
+  { image: "/images/category-tonneau.webp", name: "Tonneau Covers", copy: "Secure, weather-ready bed protection.", tag: "BED PROTECTION" },
+  { image: "/images/category-steps.webp", name: "Running Boards", copy: "A stronger step with trail-ready stance.", tag: "STEP BARS" },
+  { image: "/images/category-liners.webp", name: "Floor Liners", copy: "Precision-fit defense against mud and spills.", tag: "INTERIOR ARMOR" },
+  { image: "/images/category-bumper.webp", name: "Truck Bumpers", copy: "Heavy-duty protection with an aggressive profile.", tag: "FRONT & REAR" },
+  { image: "/images/category-lighting.webp", name: "Lighting", copy: "See farther with durable LED upgrades.", tag: "VISIBILITY" },
+  { image: "/images/category-storage.webp", name: "Storage", copy: "Organize tools and cargo without wasted space.", tag: "TRUCK STORAGE" },
 ];
 
 const picks = [
@@ -31,6 +39,7 @@ const picks = [
     fit: "Popular truck fitments available",
     price: "Check current price",
     score: "9.2",
+    image: "/images/category-tonneau.webp",
   },
   {
     badge: "TOP VALUE",
@@ -39,6 +48,7 @@ const picks = [
     fit: "Vehicle-specific bolt-on options",
     price: "See available deals",
     score: "8.9",
+    image: "/images/category-steps.webp",
   },
   {
     badge: "DAILY DRIVER PICK",
@@ -47,6 +57,7 @@ const picks = [
     fit: "Custom-fit sets by year and model",
     price: "Check current price",
     score: "9.0",
+    image: "/images/category-liners.webp",
   },
 ];
 
@@ -62,8 +73,19 @@ export default function Home() {
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
   const [fitMessage, setFitMessage] = useState("");
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [heroPaused, setHeroPaused] = useState(false);
 
   const models = useMemo(() => (make ? makes[make] ?? [] : []), [make]);
+
+  useEffect(() => {
+    if (heroPaused) return;
+    const timer = window.setInterval(
+      () => setHeroIndex((index) => (index + 1) % heroSlides.length),
+      6500,
+    );
+    return () => window.clearInterval(timer);
+  }, [heroPaused]);
 
   function findFit(event: FormEvent) {
     event.preventDefault();
@@ -103,8 +125,21 @@ export default function Home() {
         </nav>
       </header>
 
-      <section className="hero" id="home">
-        <div className="hero-image" aria-hidden="true" />
+      <section
+        className="hero"
+        id="home"
+        onMouseEnter={() => setHeroPaused(true)}
+        onMouseLeave={() => setHeroPaused(false)}
+      >
+        <div className="hero-carousel" aria-hidden="true">
+          {heroSlides.map((slide, index) => (
+            <div
+              className={index === heroIndex ? "hero-slide active" : "hero-slide"}
+              key={slide.src}
+              style={{ backgroundImage: `url(${slide.src})` }}
+            />
+          ))}
+        </div>
         <div className="hero-shade" />
         <div className="hero-copy shell">
           <p className="eyebrow"><span /> Tested for work. Ready for weekends.</p>
@@ -123,6 +158,18 @@ export default function Home() {
             <span>✓ Honest comparisons</span>
             <span>✓ No-cost buying guides</span>
           </div>
+          <span className="sr-only" aria-live="polite">
+            Hero image {heroIndex + 1} of {heroSlides.length}: {heroSlides[heroIndex].label}
+          </span>
+        </div>
+        <div className="hero-controls" aria-label="Hero image carousel" onFocus={() => setHeroPaused(true)} onBlur={() => setHeroPaused(false)}>
+          <button type="button" className="hero-arrow" aria-label="Previous hero image" onClick={() => setHeroIndex((index) => (index - 1 + heroSlides.length) % heroSlides.length)}>‹</button>
+          <div className="hero-dots">
+            {heroSlides.map((slide, index) => (
+              <button type="button" key={slide.src} className={index === heroIndex ? "active" : ""} aria-label={`Show hero image ${index + 1}: ${slide.label}`} aria-current={index === heroIndex ? "true" : undefined} onClick={() => setHeroIndex(index)} />
+            ))}
+          </div>
+          <button type="button" className="hero-arrow" aria-label="Next hero image" onClick={() => setHeroIndex((index) => (index + 1) % heroSlides.length)}>›</button>
         </div>
       </section>
 
@@ -177,12 +224,14 @@ export default function Home() {
               rel="sponsored noopener noreferrer"
               key={category.name}
             >
-              <div className="category-glow" />
-              <span className="category-tag">{category.tag}</span>
-              <span className="category-icon">{category.icon}</span>
-              <h3>{category.name}</h3>
-              <p>{category.copy}</p>
-              <strong>Explore gear <b>→</b></strong>
+              <div className="category-photo" style={{ backgroundImage: `url(${category.image})` }} aria-hidden="true">
+                <span className="category-tag">{category.tag}</span>
+              </div>
+              <div className="category-content">
+                <h3>{category.name}</h3>
+                <p>{category.copy}</p>
+                <strong>Explore gear <b>→</b></strong>
+              </div>
             </a>
           ))}
         </div>
@@ -198,11 +247,10 @@ export default function Home() {
             <p>Popular OEDRO accessories organized to make your shortlist faster—not to replace checking exact fitment.</p>
           </div>
           <div className="picks-grid">
-            {picks.map((pick, index) => (
+            {picks.map((pick) => (
               <article className="pick-card" key={pick.title}>
-                <div className={`pick-visual visual-${index + 1}`}>
+                <div className="pick-visual" style={{ backgroundImage: `url(${pick.image})` }} aria-hidden="true">
                   <span>{pick.category}</span>
-                  <div className="product-silhouette">{index === 0 ? "▰" : index === 1 ? "╱═╲" : "▦"}</div>
                   <b>{pick.score}<small>/10</small></b>
                 </div>
                 <div className="pick-content">

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://roadforgegarage.com"),
+  metadataBase: new URL("https://roadforge-garage.com"),
   title: "RoadForge Garage | Truck Accessories, Reviews & Fitment Guides",
   description:
     "Independent truck accessory buying guides, fitment help, OEDRO product recommendations, and current automotive gear offers.",
@@ -29,28 +29,28 @@ export const metadata: Metadata = {
     "truck gear guides",
   ],
   openGraph: {
-    title: "RoadForge Garage | Truck Accessories & Fitment Guides",
+    title: "RoadForge Garage — Upgrade Your Truck. Own Every Mile.",
     description:
-      "Independent truck accessory buying guides, fitment help, and OEDRO product recommendations.",
-    url: "/",
+      "Independent truck accessory reviews, fitment help, buying guides, and OEDRO gear recommendations for work and weekend builds.",
+    url: "https://roadforge-garage.com/",
     siteName: "RoadForge Garage",
     type: "website",
     images: [
       {
-        url: "/opengraph-image",
+        url: "https://roadforge-garage.com/roadforge-facebook-20260927.jpg",
         width: 1200,
         height: 630,
         alt: "RoadForge Garage — Upgrade your truck. Own every mile.",
-        type: "image/png",
+        type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "RoadForge Garage | Truck Accessories & Fitment Guides",
+    title: "RoadForge Garage — Upgrade Your Truck. Own Every Mile.",
     description:
-      "Independent truck accessory buying guides, fitment help, and OEDRO product recommendations.",
-    images: ["/opengraph-image"],
+      "Independent truck accessory reviews, fitment help, buying guides, and OEDRO gear recommendations.",
+    images: ["https://roadforge-garage.com/roadforge-facebook-20260927.jpg"],
   },
   other: {
     "codex-preview": "development",

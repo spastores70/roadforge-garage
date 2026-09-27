@@ -1,0 +1,4 @@
+.codex/
+.git/
+node_modules/
+.next/
